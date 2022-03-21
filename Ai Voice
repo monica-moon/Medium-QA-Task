@@ -1,0 +1,32 @@
+@given('Open url')
+def open_url(context):
+    context.driver.get(
+'https://medium.com/bits-and-behavior/sigcse-2022-trip-report-reunited-cf5fd2bce3e'
+)
+@when('click on listen')
+def hover_to_button(context):
+    context.driver.find_element(By.XPATH,
+"//div[@class='wh wi wj wk wl iy eo cf']//button[@class='bb od eb o ao wb wc']"
+).click()
+@then('verify {expected_name} in list of ai voices')
+def expand_shadow_element(context, element, expected_name):
+    shadow_root = context.driver.execute_script(
+'return arguments[0].shadowRoot, element'
+)
+    return shadow_root
+#finds each element below shadow root and clicks until you get to tag w/ ai-voice menu
+#illustrates hierchy of " div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > div:nth-child(1)"
+    root1 = context.driver.find_element_by_tag_name('speechify-root')
+    shadow_root1 = expand_shadow_element(root1)
+    root2 = shadow_root1.find_element_by_css_selector('.sc-bZSRNg.faWLLn')
+    shadow_root2 = expand_shadow_element(root2)
+    root3 = shadow_root2.find_element_by_css_selector('.sc-iUuxjF.jkpXXn')
+    shadow_root3 = expand_shadow_element(root3)
+    root4 = shadow_root3.find_element_by_css_selector('.sc-iBaQBe jzdJlA')
+    shadow_root4 = expand_shadow_element(root4)
+    root5 = shadow_root4.find_element_by_css_selector('.sc-iBaQBe jzdJlA')
+    shadow_root5 = expand_shadow_element(root5)
+    search_button = shadow_root5.find_element_by_css_selector('.sc-jNMcJZ kLJtdU')
+    search_button.click()
+    actual_result = context.driver.find_element(By.CSS_SELECTOR, '.sc-lmoMya ieikJL').text
+    assert actual_result == expected_name, f'Expected {expected_name}, but got {actual_result}
